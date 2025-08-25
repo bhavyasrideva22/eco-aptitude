@@ -1,13 +1,52 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { AssessmentIntro } from "@/components/AssessmentIntro";
+import { AssessmentFlow } from "@/components/AssessmentFlow";
+import { AssessmentResults } from "@/components/AssessmentResults";
+
+type ViewState = "intro" | "assessment" | "results";
 
 const Index = () => {
+  const [currentView, setCurrentView] = useState<ViewState>("intro");
+  const [assessmentResults, setAssessmentResults] = useState(null);
+
+  const handleStartAssessment = () => {
+    setCurrentView("assessment");
+  };
+
+  const handleAssessmentComplete = (results: any) => {
+    setAssessmentResults(results);
+    setCurrentView("results");
+  };
+
+  const handleBackToIntro = () => {
+    setCurrentView("intro");
+  };
+
+  const handleRestart = () => {
+    setAssessmentResults(null);
+    setCurrentView("intro");
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <>
+      {currentView === "intro" && (
+        <AssessmentIntro onStartAssessment={handleStartAssessment} />
+      )}
+      
+      {currentView === "assessment" && (
+        <AssessmentFlow 
+          onComplete={handleAssessmentComplete}
+          onBack={handleBackToIntro}
+        />
+      )}
+      
+      {currentView === "results" && assessmentResults && (
+        <AssessmentResults 
+          results={assessmentResults}
+          onRestart={handleRestart}
+        />
+      )}
+    </>
   );
 };
 
